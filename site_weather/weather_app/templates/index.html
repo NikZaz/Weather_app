@@ -1,0 +1,161 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Прогноз погоды</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header_items">
+                <script class="date">
+                    var d = new Date();
+                    var days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
+                    document.write(days[d.getDay()] + ", " + d.getDate() + " " + getMonthName(d.getMonth()) + " " +
+                        d.getFullYear());
+
+                    function getMonthName(monthIndex) {
+                        var months = ["Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа",
+                            "Сентября", "Октября", "Ноября", "Декабря"
+                        ];
+                        return months[monthIndex];
+                    }
+                </script>
+            </div>
+        </div>
+    </header>
+    <main class="main">
+        <div class="container">
+            <h1 class="title">Прогноз погоды для <input class="input_name_city" type="text" id="city"
+                    placeholder="Название города"> <button id="addToFavoritesButton"
+                    class="add-favorite-button">+</button></h1>
+            <div id="weather"></div>
+            <div id="city-suggestion" class="city-suggestion"></div>
+        </div>
+    </main>
+    <footer class="footer">
+        <div class="container">
+
+        </div>
+    </footer>
+    <div class="container">
+
+        <div class="favorites">
+            <h2 class="favorites-title">Мои избранные города</h2>
+            <div id="favoritesList" class="favorites-list"></div>
+
+        </div>
+
+        <div id="selectedCityWeather" class="selected-city-weather"></div>
+    </div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://unpkg.com/unidecode@1.1.1/lib/index.js"></script>
+<script>
+    $(function() {
+        function addToFavorites(cityName) {
+            if (cityName.trim() === "") {
+                return;
+            }
+            var favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+            var lowercaseCityName = cityName.toLowerCase();
+            if (favorites.some(function(item) {
+                    return item.toLowerCase() === lowercaseCityName;
+                })) {
+                alert("Город уже есть в избранном!");
+            } else {
+                favorites.push(cityName);
+                localStorage.setItem("favorites", JSON.stringify(favorites));
+                updateFavoritesList();
+            }
+        }
+
+        function removeFromFavorites(cityName) {
+            var favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+            var lowercaseCityName = cityName.toLowerCase();
+            var index = favorites.findIndex(function(item) {
+                return item.toLowerCase() === lowercaseCityName;
+            });
+            if (index !== -1) {
+                favorites.splice(index, 1);
+                localStorage.setItem("favorites", JSON.stringify(favorites));
+                updateFavoritesList();
+            }
+        }
+
+        function updateFavoritesList() {
+            var favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+            var favoritesList = $("#favoritesList");
+            favoritesList.empty();
+            for (var i = 0; i < favorites.length; i++) {
+                var cityName = favorites[i];
+                var listItem = $("<div class='favorite-item'>" + cityName +
+                    "<button class='remove-favorite-button'>x</button></div>");
+                favoritesList.append(listItem);
+                listItem.click(function() {
+                    var selectedCityName = $(this).text().slice(0, -1);
+                    displayWeatherForCity(selectedCityName);
+                });
+            }
+        }
+
+        function displayWeatherForCity(cityName) {
+            $("#selectedCityWeather").empty();
+            $.getJSON("https://api.openweathermap.org/data/2.5/weather?q=" + cityName +
+                "&appid=6cfa59fa4d915fc369cf8c1953dd7ac4&units=metric&lang=" + (localStorage
+                    .getItem("language") || "en"),
+                function(data) {
+                    var div = $("#selectedCityWeather");
+                    var temperatureCelsius = Math.round(data.main.temp);
+                    var weatherDescription = data.weather[0].description;
+                    div.append("<h3>Погода в " + cityName + "</h3>");
+                    div.append("<p>" + weatherDescription + "</p>");
+                    div.append("<p>Температура: " + temperatureCelsius + "°C</p>");
+                    div.append("<img src='https://openweathermap.org/img/w/" + data.weather[0]
+                        .icon + ".png' alt='" + weatherDescription + "'>");
+                });
+        }
+        $("#addToFavoritesButton").click(function() {
+            var cityName = $("#city").val();
+            addToFavorites(cityName);
+        });
+        $(document).on("click", ".remove-favorite-button", function() {
+            var listItem = $(this).parent();
+            var cityName = listItem.text().slice(0, -1);
+            removeFromFavorites(cityName);
+        });
+        $("#city").autocomplete({
+            source: function(request, response) {
+                var searchTerm = request.term;
+                $.getJSON("https://api.openweathermap.org/data/2.5/find?q=" + searchTerm +
+                    "&appid=6cfa59fa4d915fc369cf8c1953dd7ac4&units=metric&lang=ru",
+                    function(data) {
+                        var cities = [];
+                        for (var i = 0; i < data.list.length; i++) {
+                            cities.push(data.list[i].name);
+                        }
+                        response(cities);
+                    });
+            },
+            minLength: 2
+        });
+        $("#city").on("input", function() {
+            var cityName = $(this).val();
+            $("#weather").empty();
+            if (cityName.trim() !== "") {
+                displayWeatherForCity(cityName);
+            }
+        });
+        updateFavoritesList();
+    });
+</script>
+
+</html>

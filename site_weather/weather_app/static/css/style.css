@@ -1,0 +1,85 @@
+html {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+*,
+*::after,
+*::before {
+    box-sizing: inherit;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+body {
+    background-image: url("/static/images/image_background.png");
+    background-size: cover; /* Растягивать изображение, чтобы оно покрывало всю область body */
+    background-repeat: no-repeat; /* Запретить повторение изображения */
+    background-attachment: fixed; /* Фиксировать фон, чтобы он не прокручивался вместе с контентом */
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 400;
+}
+
+.container {
+    max-width: 1230px;
+    margin: 0 auto;
+    padding: 0 15px;
+    word-wrap: break-word;
+}
+
+.header {
+    padding: 20px 0;
+}
+
+.header_items{
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.input_name_city{
+    border: 1px solid;
+    border-radius: 30px;
+    text-align: center;
+    width: 400px;
+    min-width: auto;
+    max-width: 100%;
+    color: black;
+}
+
+.select_language{
+    color: black;
+}
+
+.add-favorite-button{
+    color: grey;
+    border-radius: 30px;
+}
+
+.favorites-list{
+    padding: 20px 0;
+}
+
+.remove-favorite-button{
+    margin-left: 10px;
+    border-radius: 30px;
+    color: grey;
+}
