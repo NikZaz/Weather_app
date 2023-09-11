@@ -1,7 +1,8 @@
 # Weather_app_v1
-<img width="1440" alt="weather_app_1" src="https://github.com/NikZaz/Weather_app_v1/assets/115639869/142f0f02-69cd-4503-b882-c827cf0072de">
-<img width="1438" alt="weather_app_3" src="https://github.com/NikZaz/Weather_app_v1/assets/115639869/d15cf985-95c1-47ba-ba17-cb294ae1d103">
-<img width="1440" alt="weather_app_2" src="https://github.com/NikZaz/Weather_app_v1/assets/115639869/03dda334-d059-4a89-9db7-ed35fa879981">
+<img width="1440" alt="weather_app_1" src="https://github.com/NikZaz/Weather_app/assets/115639869/180ff261-2b4f-4c0a-9b94-9b8fad7ddf04">
+<img width="1440" alt="weather_app_2" src="https://github.com/NikZaz/Weather_app/assets/115639869/d4235a64-9a05-495a-920e-5aeae09dd40b">
+<img width="1438" alt="weather_app_3" src="https://github.com/NikZaz/Weather_app/assets/115639869/0f5a2079-fd04-45b4-86ac-fdf8437c351c">
+
 
 
 Название проекта: Прогноз погоды
